@@ -1,4 +1,5 @@
 import { ethers } from "hardhat";
+import { send } from "process";
 import * as helper from "./helpful_scripts";
 
 async function main() {
@@ -12,6 +13,8 @@ async function main() {
 
     let tx = await attack.RIP(sendTo);
     await tx.wait();
+
+    console.log(await helper.provider.getBalance(sendTo))
 }
 
 main()
